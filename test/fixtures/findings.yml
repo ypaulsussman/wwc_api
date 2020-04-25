@@ -1,0 +1,59 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  intervention: one
+  outcome_measure: one
+  comparison: MyText
+  outcome_domain: MyText
+  period: MyText
+  sample_description: MyText
+  is_subgroup: false
+  outcome_sample_size: 1
+  outcome_measure_intervention_sample_size: 1.5
+  outcome_measure_comparison_sample_size: 1.5
+  intervention_clusters_sample_size: 1
+  comparison_clusters_sample_size: 1
+  intervention_mean: 1.5
+  comparison_mean: 1.5
+  intervention_standard_deviation: 1
+  comparison_standard_deviation: 1
+  effect_size_study: 1.5
+  effect_size_wwc: 1.5
+  improvement_index: 1.5
+  p_value_study: 1.5
+  p_value_wwc: 1.5
+  icc: 1.5
+  clusters_total: 1.5
+  is_statistically_significant: false
+  finding_rating: MyText
+  essa_rating: MyText
+  l1_unit_of_analysis: MyText
+
+two:
+  intervention: two
+  outcome_measure: two
+  comparison: MyText
+  outcome_domain: MyText
+  period: MyText
+  sample_description: MyText
+  is_subgroup: false
+  outcome_sample_size: 1
+  outcome_measure_intervention_sample_size: 1.5
+  outcome_measure_comparison_sample_size: 1.5
+  intervention_clusters_sample_size: 1
+  comparison_clusters_sample_size: 1
+  intervention_mean: 1.5
+  comparison_mean: 1.5
+  intervention_standard_deviation: 1
+  comparison_standard_deviation: 1
+  effect_size_study: 1.5
+  effect_size_wwc: 1.5
+  improvement_index: 1.5
+  p_value_study: 1.5
+  p_value_wwc: 1.5
+  icc: 1.5
+  clusters_total: 1.5
+  is_statistically_significant: false
+  finding_rating: MyText
+  essa_rating: MyText
+  l1_unit_of_analysis: MyText

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
 class Study < ApplicationRecord
-  belongs_to :review
+  has_many :reviews
+  has_many :findings, through: :reviews
 end

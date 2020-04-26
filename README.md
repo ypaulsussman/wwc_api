@@ -28,3 +28,10 @@
   - `rails db:reset studies=db/WWC-export-archive-2020-Apr-25-142355/Studies.csv`
   - `rails db:seed findings=db/WWC-export-archive-2020-Apr-25-142355/Findings.csv`
   - Add formatted temp-file handling to `seeds.rb`/`*_scrubber.rb`
+- Seventh Commit:
+  - `rails g migration AddWwcidToInterventions wwcid:integer`
+  - `rails g migration DropReviewRefFromStudies review:references`
+  - `rails g migration AddStudyReftoReviews study:references`
+  - Invert (_that is, correct_) the `has_many`/`belongs_to` on `Study` and `Review`
+  - Add `has_many :findings, through: :reviews` to `Study`
+  - Replace the above migrations with manual updates to the prior migrations... mostly just to see if it breaks anything (_so far, so good?_)

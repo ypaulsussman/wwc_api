@@ -1,7 +1,8 @@
+# frozen_string_literal: true
+
 class CreateStudies < ActiveRecord::Migration[6.0]
   def change
     create_table :studies do |t|
-      t.references :review, null: false, foreign_key: true
       t.text :citation
       t.text :publication
       t.text :publication_date

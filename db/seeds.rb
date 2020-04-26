@@ -35,36 +35,40 @@ if ENV['studies'].present?
 
   ## Import `reviews` and `studies`
   CSV.foreach('db/studies_formatted.csv', headers: true) do |row|
-    # Grab all data to create Review
+    # ~12k unique studies; ~15k records in CSV
+    unless Study.find_by(id: row['StudyID'])
+      study = Study.new
+      study.id = row['StudyID']
+
+      # TODO: Replace, once you've created the 'full boolification' script
+      if row['Demographics_of_Study_Sample_International'] == '1.00'
+        study.demographics_of_study_sample_international = true
+      else
+        study.demographics_of_study_sample_international = false
+      end
+
+      STUDY_ATTRS.each { |attr| study[attr.downcase] = row[attr] }
+      study.save!
+    end
+
+    # Create new Review
     review = Review.new
     review.id = row['ReviewID']
 
-    # Can't use ProductID as pk; there are 10/~450 cases where a single ID matches multiple names
+    # Across the findings/studies CSV's, multiple id's connect to the same name; some names have
+    # no id; some names appear both with and without an id... TL;DR can't use InterventionID as pk
+    review.intervention =
+      Intervention.find_or_create_by!(wwcid: row['InterventionID'], name: row['Intervention_Name'])
+    # Can't use ProductID as pk; there are ~10 cases where a single ID matches multiple names
     review.product =
-      Product.find_or_create_by(wwcid: row['ProductID'], name: row['Product_Name'])
+      Product.find_or_create_by!(wwcid: row['ProductID'], name: row['Product_Name'])
+    # No ID provided for protocols
     review.protocol =
-      Protocol.find_or_create_by(name: row['Protocol'], version: row['Protocol_Version'])
+      Protocol.find_or_create_by!(name: row['Protocol'], version: row['Protocol_Version'])
+    review.study = Study.find(row['StudyID'])
 
     REVIEW_ATTRS.each { |attr| review[attr.downcase] = row[attr] }
     review.save!
-
-    # ~15k records in CSV; ~12k unique studies
-    next if Study.find_by(id: row['StudyID'])
-
-    # Grab all data to create Study
-    study = Study.new
-    study.id = row['StudyID']
-    study.review = Review.find_or_create_by(id: row['ReviewID'])
-
-    # TODO: Replace, once you've created the 'full boolification' script
-    if row['Demographics_of_Study_Sample_International'] == '1.00'
-      study.demographics_of_study_sample_international = true
-    else
-      study.demographics_of_study_sample_international = false
-    end
-
-    STUDY_ATTRS.each { |attr| study[attr.downcase] = row[attr] }
-    study.save!
 
   rescue StandardError => e
     puts "Study #{study.id} generated: " + e
@@ -74,7 +78,6 @@ if ENV['studies'].present?
   File.delete('db/studies_formatted.csv') if File.exist?('db/studies_formatted.csv')
 end
 
-# THEN: diff against second branch to create Finding:Review relationship; add below
 if ENV['findings'].present?
   # Scrub downloaded CSV
   @findings_scrubber.scrub ENV['findings']
@@ -98,11 +101,11 @@ if ENV['findings'].present?
     finding.id = row['FindingID']
 
     finding.intervention =
-      Intervention.find_or_create_by(id: row['InterventionID'], name: row['Intervention_Name'])
+      Intervention.find_or_create_by!(wwcid: row['InterventionID'], name: row['Intervention_Name'])
     finding.outcome_measure =
-      OutcomeMeasure.find_or_create_by(id: row['OutcomeMeasureID'], name: row['Outcome_Measure'])
+      OutcomeMeasure.find_or_create_by!(id: row['OutcomeMeasureID'], name: row['Outcome_Measure'])
     finding.review =
-      Review.find_or_create_by(id: row['ReviewID'])
+      Review.find_or_create_by!(id: row['ReviewID'])
 
     FINDING_ATTRS.each do |attr|
       finding[attr.downcase] = row[attr]

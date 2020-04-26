@@ -6,6 +6,7 @@ class CreateReviews < ActiveRecord::Migration[6.0]
       t.integer :intervention_id
       t.integer :product_id
       t.integer :protocol_id
+      t.integer :study_id
       t.text :standards_version
       t.text :purpose_of_review
       t.date :posting_date

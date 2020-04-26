@@ -5,8 +5,65 @@
 # to only populate the `findings` (and its fk-dependent) tables
 
 require 'csv'
+require_relative 'wwc_scrubbers/studies_scrubber.rb'
 require_relative 'wwc_scrubbers/findings_scrubber.rb'
 
+if ENV['studies'].present?
+  # Scrub downloaded CSV
+  @studies_scrubber.scrub ENV['studies']
+
+  # No records appear to have values for `US_Region_U_S__Region`, `School_setting_Student_Count`,
+  # `Disability_Autism_spectrum_disorder`, `Disability_Individualized_Education_Plan__IEP_`,
+  # `Demographics_of_Study_Sample_Minority`, `Demographics_of_Study_Sample_Non_minority`, and
+  # `Demographics_of_Study_Sample_Students_with_disabilities` -- so skipping these fields.
+
+  # In addition, postponing other set-based boolean fields until you've resolved (join-table vs enum
+  # vs standard denormalized string) for each set.
+
+  # posting_date:date study_rating:text rating_reason:text ineligibility_reason:text
+
+  REVIEW_ATTRS =
+    ['Standards_Version', 'Purpose_of_Review', 'Posting_Date', 'Study_Rating', 'Rating_Reason',
+     'Ineligibility_Reason'].freeze
+  STUDY_ATTRS =
+    [].freeze
+
+  ## Import `reviews` and `studies`
+  CSV.foreach('db/findings_formatted.csv', headers: true) do |row|
+    # 02 grab all data to find/create Review
+    review = Review.new
+    review.id = row['ReviewID']
+    review.product =
+      Product.find_or_create_by(id: row['ProductID'], name: row['Product_Name'])
+    review.protocol =
+      Protocol.find_or_create_by(name: row['Protocol'], version: row['Protocol_Version'])
+
+    REVIEW_ATTRS.each do |attr|
+      review[attr.downcase] = row[attr]
+    end
+    review.save!
+
+    # 03 grab all data to find/create Study
+    study = Study.new
+    study.id = row['StudyID']
+    study.review = Review.find_or_create_by(id: row['ReviewID'])
+
+    if row['Demographics_of_Study_Sample_International'] == '1.00'
+      study.demographics_of_study_sample_international = true
+    else
+      study.demographics_of_study_sample_international = false
+    end
+
+    STUDY_ATTRS.each do |attr|
+      study[attr.downcase] = row[attr]
+    end
+    study.save!
+  rescue StandardError => e
+    puts "Finding #{finding.id} generated: " + e
+  end
+end
+
+# THEN: diff against second branch to create Finding:Review relationship; add below
 if ENV['findings'].present?
   # Scrub downloaded CSV
   @findings_scrubber.scrub ENV['findings']
@@ -14,7 +71,7 @@ if ENV['findings'].present?
   # We don't care about...
   #   Intervention_Name, Outcome_Measure (provided on their own tables), or
   #   Protocol (useless w/o accompanying Protocol_Version, as in Studies and InterventionReports)
-  FINDINGS_ATTRS =
+  FINDING_ATTRS =
     ['Comparison', 'Outcome_Domain', 'Period', 'Sample_Description', 'Is_Subgroup',
      'Outcome_Sample_Size', 'Outcome_Measure_Intervention_Sample_Size',
      'Outcome_Measure_Comparison_Sample_Size', 'Intervention_Clusters_Sample_Size',
@@ -33,7 +90,7 @@ if ENV['findings'].present?
     finding.intervention =
       Intervention.find_or_create_by(id: row['InterventionID'], name: row['Intervention_Name'])
 
-    FINDINGS_ATTRS.each do |attr|
+    FINDING_ATTRS.each do |attr|
       finding[attr.downcase] = row[attr]
     end
 

@@ -17,50 +17,61 @@ if ENV['studies'].present?
   # `Demographics_of_Study_Sample_Minority`, `Demographics_of_Study_Sample_Non_minority`, and
   # `Demographics_of_Study_Sample_Students_with_disabilities` -- so skipping these fields.
 
-  # In addition, postponing other set-based boolean fields until you've resolved (join-table vs enum
-  # vs standard denormalized string) for each set.
+  # In addition, don't add other set-based boolean fields until you've resolved how to normalize
+  # (join-table vs enum vs standard denormalized string) each set.
 
-  # posting_date:date study_rating:text rating_reason:text ineligibility_reason:text
-
+  # The following attributes from the `studies` CSV _appear_ to be unique to a ReviewID, not a
+  # StudyID (and vice versa for the array following them) -- but I'm not 100% certain.
   REVIEW_ATTRS =
     ['Standards_Version', 'Purpose_of_Review', 'Posting_Date', 'Study_Rating', 'Rating_Reason',
      'Ineligibility_Reason'].freeze
   STUDY_ATTRS =
-    [].freeze
+    ['Citation', 'Publication', 'Publication_Date', 'Study_Page_URL', 'Study_Design', 'ERICId',
+     'Multisite', 'Demographics_of_Study_Sample_International',
+     'Demographics_of_Study_Sample_English_language_learners',
+     'Demographics_of_Study_Sample_Free_or_reduced_price_lunch', 'Ethnicity_Hispanic',
+     'Ethnicity_Not_Hispanic', 'Race_Asian', 'Race_Black', 'Race_Native_American', 'Race_Other',
+     'Race_Pacific_Islander', 'Race_White', 'Gender_Female', 'Gender_Male'].freeze
 
   ## Import `reviews` and `studies`
-  CSV.foreach('db/findings_formatted.csv', headers: true) do |row|
-    # 02 grab all data to find/create Review
+  CSV.foreach('db/studies_formatted.csv', headers: true) do |row|
+    # Grab all data to create Review
     review = Review.new
     review.id = row['ReviewID']
+
+    # Can't use ProductID as pk; there are 10/~450 cases where a single ID matches multiple names
     review.product =
-      Product.find_or_create_by(id: row['ProductID'], name: row['Product_Name'])
+      Product.find_or_create_by(wwcid: row['ProductID'], name: row['Product_Name'])
     review.protocol =
       Protocol.find_or_create_by(name: row['Protocol'], version: row['Protocol_Version'])
 
-    REVIEW_ATTRS.each do |attr|
-      review[attr.downcase] = row[attr]
-    end
+    REVIEW_ATTRS.each { |attr| review[attr.downcase] = row[attr] }
     review.save!
 
-    # 03 grab all data to find/create Study
+    # ~15k records in CSV; ~12k unique studies
+    next if Study.find_by(id: row['StudyID'])
+
+    # Grab all data to create Study
     study = Study.new
     study.id = row['StudyID']
     study.review = Review.find_or_create_by(id: row['ReviewID'])
 
+    # TODO: Replace, once you've created the 'full boolification' script
     if row['Demographics_of_Study_Sample_International'] == '1.00'
       study.demographics_of_study_sample_international = true
     else
       study.demographics_of_study_sample_international = false
     end
 
-    STUDY_ATTRS.each do |attr|
-      study[attr.downcase] = row[attr]
-    end
+    STUDY_ATTRS.each { |attr| study[attr.downcase] = row[attr] }
     study.save!
+
   rescue StandardError => e
-    puts "Finding #{finding.id} generated: " + e
+    puts "Study #{study.id} generated: " + e
   end
+
+  puts 'Deleting formatted studies!'
+  File.delete('db/studies_formatted.csv') if File.exist?('db/studies_formatted.csv')
 end
 
 # THEN: diff against second branch to create Finding:Review relationship; add below
@@ -85,10 +96,13 @@ if ENV['findings'].present?
   CSV.foreach('db/findings_formatted.csv', headers: true) do |row|
     finding = Finding.new
     finding.id = row['FindingID']
-    finding.outcome_measure =
-      OutcomeMeasure.find_or_create_by(id: row['OutcomeMeasureID'], name: row['Outcome_Measure'])
+
     finding.intervention =
       Intervention.find_or_create_by(id: row['InterventionID'], name: row['Intervention_Name'])
+    finding.outcome_measure =
+      OutcomeMeasure.find_or_create_by(id: row['OutcomeMeasureID'], name: row['Outcome_Measure'])
+    finding.review =
+      Review.find_or_create_by(id: row['ReviewID'])
 
     FINDING_ATTRS.each do |attr|
       finding[attr.downcase] = row[attr]
@@ -98,4 +112,7 @@ if ENV['findings'].present?
   rescue StandardError => e
     puts "Finding #{finding.id} generated: " + e
   end
+
+  puts 'Deleting formatted findings!'
+  File.delete('db/findings_formatted.csv') if File.exist?('db/findings_formatted.csv')
 end

@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  intervention_id: 1
+  product_id: 1
+  protocol_id: 1
+  standards_version: MyText
+  purpose_of_review: MyText
+  posting_date: 2020-04-25
+  study_rating: MyText
+  rating_reason: MyText
+  ineligibility_reason: MyText
+
+two:
+  intervention_id: 1
+  product_id: 1
+  protocol_id: 1
+  standards_version: MyText
+  purpose_of_review: MyText
+  posting_date: 2020-04-25
+  study_rating: MyText
+  rating_reason: MyText
+  ineligibility_reason: MyText

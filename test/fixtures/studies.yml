@@ -1,0 +1,47 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  review: one
+  citation: MyText
+  publication: MyText
+  publication_date: MyText
+  study_page_url: MyText
+  study_design: MyText
+  ericid: MyText
+  multisite: false
+  demographics_of_study_sample_international: false
+  demographics_of_study_sample_english_language_learners: 1.5
+  demographics_of_study_sample_free_or_reduced_price_lunch: 1.5
+  ethnicity_hispanic: 1.5
+  ethnicity_not_hispanic: 1.5
+  race_asian: 1.5
+  race_black: 1.5
+  race_native_american: 1.5
+  race_other: 1.5
+  race_pacific_islander: 1.5
+  race_white: 1.5
+  gender_female: 1.5
+  gender_male: 1.5
+
+two:
+  review: two
+  citation: MyText
+  publication: MyText
+  publication_date: MyText
+  study_page_url: MyText
+  study_design: MyText
+  ericid: MyText
+  multisite: false
+  demographics_of_study_sample_international: false
+  demographics_of_study_sample_english_language_learners: 1.5
+  demographics_of_study_sample_free_or_reduced_price_lunch: 1.5
+  ethnicity_hispanic: 1.5
+  ethnicity_not_hispanic: 1.5
+  race_asian: 1.5
+  race_black: 1.5
+  race_native_american: 1.5
+  race_other: 1.5
+  race_pacific_islander: 1.5
+  race_white: 1.5
+  gender_female: 1.5
+  gender_male: 1.5

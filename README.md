@@ -35,3 +35,5 @@
   - Invert (_that is, correct_) the `has_many`/`belongs_to` on `Study` and `Review`
   - Add `has_many :findings, through: :reviews` to `Study`
   - Replace the above migrations with manual updates to the prior migrations... mostly just to see if it breaks anything (_so far, so good?_)
+- Eighth Commit:
+  - Extract `studies`/`findings` seed-code into separate `*_loader.rb` files

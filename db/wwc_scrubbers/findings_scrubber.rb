@@ -7,10 +7,7 @@ MALFORMED_FINDINGS_TOKENS =
    'C', 'Types', 'equivalent', 'Methods', 'More decodable', 'Other', 'Non-White',
    'Mac Gets Well'].freeze
 
-# Don't need instancing (Class) or reuse across files (Module)
-@findings_scrubber = Object.new
-
-def @findings_scrubber.scrub(path_to_csv)
+def @findings_data.scrub(path_to_csv)
   File.delete('db/findings_formatted.csv') if File.exist?('db/findings_formatted.csv')
 
   # Stream don't slurp, in case... we decide to run this on an Arduino later?

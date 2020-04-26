@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-@studies_scrubber = Object.new
-
-def @studies_scrubber.scrub(path_to_csv)
+def @studies_data.scrub(path_to_csv)
   File.delete('db/studies_formatted.csv') if File.exist?('db/studies_formatted.csv')
 
   File.foreach(path_to_csv) do |row, row_num|

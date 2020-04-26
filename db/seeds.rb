@@ -32,6 +32,8 @@ if ENV['findings'].present?
       OutcomeMeasure.find_or_create_by(id: row['OutcomeMeasureID'], name: row['Outcome_Measure'])
     finding.intervention =
       Intervention.find_or_create_by(id: row['InterventionID'], name: row['Intervention_Name'])
+    finding.review =
+      Review.find_or_create_by(id: row['ReviewID'])
 
     FINDINGS_ATTRS.each do |attr|
       finding[attr.downcase] = row[attr]

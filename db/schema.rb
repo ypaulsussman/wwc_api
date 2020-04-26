@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # rubocop:disable Metrics/BlockLength, Style/NumericLiterals, Style/StringLiterals
-ActiveRecord::Schema.define(version: 2020_04_25_193416) do
+ActiveRecord::Schema.define(version: 2020_04_26_011925) do
   enable_extension "plpgsql"
 
   create_table "findings", force: :cascade do |t|
@@ -34,8 +34,10 @@ ActiveRecord::Schema.define(version: 2020_04_25_193416) do
     t.text "l1_unit_of_analysis"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "review_id", null: false
     t.index ["intervention_id"], name: "index_findings_on_intervention_id"
     t.index ["outcome_measure_id"], name: "index_findings_on_outcome_measure_id"
+    t.index ["review_id"], name: "index_findings_on_review_id"
   end
 
   create_table "interventions", force: :cascade do |t|
@@ -50,6 +52,11 @@ ActiveRecord::Schema.define(version: 2020_04_25_193416) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "reviews", force: :cascade do |t|
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "name"
     t.string "email"
@@ -60,5 +67,6 @@ ActiveRecord::Schema.define(version: 2020_04_25_193416) do
 
   add_foreign_key "findings", "interventions"
   add_foreign_key "findings", "outcome_measures"
+  add_foreign_key "findings", "reviews"
 end
 # rubocop:enable Metrics/BlockLength, Style/NumericLiterals, Style/StringLiterals

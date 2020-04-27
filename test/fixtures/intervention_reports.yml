@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  intervention_id: 1
+  protocol_id: 1
+  numstudiesmeetingstandards: 
+  numstudieseligible: 
+  sample_size_intervention: 
+  effectiveness_rating: MyText
+  outcome_domain: MyText
+
+two:
+  intervention_id: 1
+  protocol_id: 1
+  numstudiesmeetingstandards: 
+  numstudieseligible: 
+  sample_size_intervention: 
+  effectiveness_rating: MyText
+  outcome_domain: MyText

@@ -9,12 +9,16 @@ require 'csv'
 # Don't need instancing (Class) or reuse across files (Module)
 @studies_data = Object.new
 @findings_data = Object.new
+@reports_data = Object.new
 
 # Add the scrub/load methods to the *_data objects
 require_relative 'wwc_scrubbers/studies_scrubber.rb'
 require_relative 'wwc_scrubbers/findings_scrubber.rb'
+require_relative 'wwc_scrubbers/intervention_reports_scrubber.rb'
+
 require_relative 'wwc_loaders/studies_loader.rb'
 require_relative 'wwc_loaders/findings_loader.rb'
+require_relative 'wwc_loaders/intervention_reports_loader.rb'
 
 if ENV['studies'].present?
   @studies_data.scrub ENV['studies']
@@ -26,4 +30,10 @@ if ENV['findings'].present?
   @findings_data.scrub ENV['findings']
   @findings_data.load
   File.delete('db/findings_formatted.csv') if File.exist?('db/findings_formatted.csv')
+end
+
+if ENV['reports'].present?
+  @reports_data.scrub ENV['reports']
+  @reports_data.load
+  File.delete('db/reports_formatted.csv') if File.exist?('db/reports_formatted.csv')
 end

@@ -9,8 +9,8 @@
 # migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
-
-ActiveRecord::Schema.define(version: 2020_04_26_173559) do
+# rubocop:disable all
+ActiveRecord::Schema.define(version: 2020_04_26_234830) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -51,11 +51,24 @@ ActiveRecord::Schema.define(version: 2020_04_26_173559) do
     t.index ["review_id"], name: "index_findings_on_review_id"
   end
 
+  create_table "intervention_reports", force: :cascade do |t|
+    t.integer "intervention_id"
+    t.integer "protocol_id"
+    t.integer "numstudiesmeetingstandards"
+    t.integer "numstudieseligible"
+    t.integer "sample_size_intervention"
+    t.text "effectiveness_rating"
+    t.text "outcome_domain"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "interventions", force: :cascade do |t|
     t.text "name"
     t.integer "wwcid"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.text "wwc_url"
   end
 
   create_table "outcome_measures", force: :cascade do |t|

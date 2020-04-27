@@ -1,5 +1,15 @@
 # What Works Clearinghouse API
 
+## Initial Data Corruptions (Contact WWC Later)
+- Malformed CSV's (_see scrubbers for steps to fix_)
+- In `reviewdictionary`: `reviewid` field is missing from `studies` and `findings`
+- In `studies`: `demographics_of_study_sample_international` is `boolean`, not `percent`
+- In `studies`: `ethnicity_hispanic` and `ethnicity_not_hispanic` are `percent`, not `boolean`
+- In `studies`: `productid` doesn't map to unique `product_name` for ID's ( 1, 11, 12, 14, 15, 18, 19, 21, 22, 23)
+- In `studies`: `study_design` undercounts `Randomized c/Controlled t/Trial` by case-sensitive split in records
+- In `intervention_reports`: `outcome_domain` is `text`, not `int`
+
+## Progress Log (Steps to v1)
 - Initial Commit:
   - `rails new wwc_api --api --skip-sprockets --skip-action-mailbox --skip-action-text --skip-sprockets --skip-system-test --skip-turbolinks --database=postgresql`
   - Clean up `Gemfile` and `application.rb`
@@ -37,3 +47,27 @@
   - Replace the above migrations with manual updates to the prior migrations... mostly just to see if it breaks anything (_so far, so good?_)
 - Eighth Commit:
   - Extract `studies`/`findings` seed-code into separate `*_loader.rb` files
+- Ninth Commit:
+  - `rails g migration AddWwcUrlToInterventions`
+  - `rails g model InterventionReport intervention_id:integer protocol_id:integer numstudiesmeetingstandards:integer numstudieseligible:integer sample_size_intervention:integer effectiveness_rating:text outcome_domain:text`
+  - Correct the `has_many`/`belongs_to` associations on a couple models
+
+### Setup
+- **Option 01:** run `rails db:prepare studies=db/WWC-export-archive-2020-Apr-25-142355/Studies.csv findings=db/WWC-export-archive-2020-Apr-25-142355/Findings.csv reports=db/WWC-export-archive-2020-Apr-25-142355/InterventionReports.csv`
+  - For newer data, simply substitute the CSV filepaths: modulo any newly-adde corruptions to the data, the scrubbers/loaders should function identically.
+  - This option is _sloooooooooow_ -- like, ~8-9 minutes slow. It's doing tons of table sequential-scans, and instancing tons of ActiveRecord objects (_neither of which is necessary: but the removal of which is an optimization I haven't yet had time for._)
+- **Option 02:** run `rails db:create && psql -d wwc_api_development -f db/2020_04_25_snapshot.sql`
+  - You're stuck with the data from April 25th, 2020 (_unless you want to update and PR!_) 😸
+  - On the other hand, this method takes... ~2 seconds?
+
+### Next Steps
+- For `studies` table, create Ruby script to replace states (_et al_) fields w/ many-many join table (_...eventually_)
+- Extract `outcome_domain` to separate Model (_...eventually_)
+- Add scraper script for FTS `descriptions` field on `interventions` table
+  - Use `Intervention_Page_URL`?
+  - Use `pg_search` this time; reference these posts:
+    - https://pganalyze.com/blog/full-text-search-ruby-rails-postgres
+    - https://thoughtbot.com/blog/optimizing-full-text-search-with-postgres-tsvector-columns-and-triggers
+- Create React SPA
+  - Build `Controller` classes only as needed
+  - No CSS framework; use FEM notes

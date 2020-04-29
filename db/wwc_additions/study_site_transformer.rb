@@ -13,12 +13,12 @@ def @studies_data.add_sites(path_to_csv, db_name)
     break
   end
 
-  i = 0
-  initial_regions_kv = headers.each_with_object({}) do |h, memo|
-    next unless h.include?('Region_State_')
+  id_for_db = 0
+  regions_hash = headers.each_with_object({}) do |header, memo|
+    next unless header.include?('Region_State_')
 
-    i += 1
-    memo[h] = [i, h[13..-1].gsub(/_/, ' ')]
+    id_for_db += 1
+    memo[header] = [id_for_db, header[13..-1].gsub(/_/, ' ')]
   end
 
   # Step 02. Populate `sites` table
@@ -27,9 +27,10 @@ def @studies_data.add_sites(path_to_csv, db_name)
   list_of_regions = ['Midwest', 'Northeast', 'South', 'West']
   populate_query = 'INSERT INTO sites(id, name, region, created_at, updated_at) VALUES '
 
-  initial_regions_kv.each do |_, v|
+  # key is CSV fieldname, v0 is int ID, v1 is parsed state-name
+  regions_hash.each do |_, v|
     populate_query +=
-      "(#{v[0]}, '#{v[1]}', #{list_of_regions.include? v[1]}, NOW(), NOW()), "
+      "(#{v[0]}, #{conn.escape_literal(v[1])}, #{list_of_regions.include? v[1]}, NOW(), NOW()), "
   end
 
   populate_query.chomp!(', ') << ';'
@@ -37,10 +38,11 @@ def @studies_data.add_sites(path_to_csv, db_name)
 
   # Step 03. Reread `studies.csv`, adding to join table whenever a study occurred at a site
   CSV.foreach(path_to_csv, headers: true) do |row|
-    initial_regions_kv.each do |k, v|
+    regions_hash.each do |k, v|
       next unless row[k] == '1.00'
 
-      conn.exec("INSERT INTO sites_studies(study_id, site_id) VALUES (#{row['StudyID']}, #{v[0]})")
+      conn.exec('INSERT INTO sites_studies(study_id, site_id) VALUES '\
+        "(#{conn.escape_literal(row['StudyID'])}, #{v[0]})")
     end
   end
 

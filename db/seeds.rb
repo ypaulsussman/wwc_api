@@ -25,7 +25,7 @@ require_relative 'wwc_additions/study_site_transformer.rb'
 if ENV['studies'].present?
   @studies_data.scrub ENV['studies']
   @studies_data.load
-  @studies_data.add_sites 'db/studies_formatted.csv', 'www_api_development'
+  @studies_data.add_sites 'db/studies_formatted.csv', 'wwc_api_development'
   File.delete('db/studies_formatted.csv') if File.exist?('db/studies_formatted.csv')
 end
 

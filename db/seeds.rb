@@ -20,9 +20,12 @@ require_relative 'wwc_loaders/studies_loader.rb'
 require_relative 'wwc_loaders/findings_loader.rb'
 require_relative 'wwc_loaders/intervention_reports_loader.rb'
 
+require_relative 'wwc_additions/study_site_transformer.rb'
+
 if ENV['studies'].present?
   @studies_data.scrub ENV['studies']
   @studies_data.load
+  @studies_data.add_sites 'db/studies_formatted.csv', 'www_api_development'
   File.delete('db/studies_formatted.csv') if File.exist?('db/studies_formatted.csv')
 end
 

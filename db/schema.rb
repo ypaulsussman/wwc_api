@@ -9,8 +9,8 @@
 # migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
-# rubocop:disable all
-ActiveRecord::Schema.define(version: 2020_04_26_234830) do
+
+ActiveRecord::Schema.define(version: 2020_04_29_020102) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -104,6 +104,20 @@ ActiveRecord::Schema.define(version: 2020_04_26_234830) do
     t.text "ineligibility_reason"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "sites", force: :cascade do |t|
+    t.text "name"
+    t.boolean "region"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "sites_studies", id: false, force: :cascade do |t|
+    t.bigint "study_id", null: false
+    t.bigint "site_id", null: false
+    t.index ["site_id", "study_id"], name: "index_sites_studies_on_site_id_and_study_id"
+    t.index ["study_id", "site_id"], name: "index_sites_studies_on_study_id_and_site_id"
   end
 
   create_table "studies", force: :cascade do |t|

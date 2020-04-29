@@ -1,5 +1,13 @@
 # What Works Clearinghouse API
 
+## Setup
+- **Option 01:** run `rails db:prepare studies=db/WWC-export-archive-2020-Apr-25-142355/Studies.csv findings=db/WWC-export-archive-2020-Apr-25-142355/Findings.csv reports=db/WWC-export-archive-2020-Apr-25-142355/InterventionReports.csv`
+  - For newer data, simply substitute the CSV filepaths: modulo any newly-added corruptions to the data, the scrubbers/loaders should function identically.
+  - This option is _sloooooooooow_ -- like, ~8-9 minutes slow. It's doing tons of table sequential-scans, and instancing tons of ActiveRecord objects (_neither of which is necessary: but the removal of which is an optimization I haven't yet had time for._)
+- **Option 02:** run `rails db:create && psql -d wwc_api_development -f db/2020_04_25_snapshot.sql`
+  - You're stuck with the data from April 25th, 2020 (_unless you want to update and PR!_) 😸
+  - On the other hand, this method takes... ~2 seconds?
+
 ## Initial Data Corruptions (Contact WWC Later)
 - Malformed CSV's (_see scrubbers for steps to fix_)
 - In `reviewdictionary`: `reviewid` field is missing from `studies` and `findings`
@@ -51,16 +59,12 @@
   - `rails g migration AddWwcUrlToInterventions`
   - `rails g model InterventionReport intervention_id:integer protocol_id:integer numstudiesmeetingstandards:integer numstudieseligible:integer sample_size_intervention:integer effectiveness_rating:text outcome_domain:text`
   - Correct the `has_many`/`belongs_to` associations on a couple models
+- Tenth Commit:
+  - Create `add_sites_to_studies.rb` seed-code
+  - `rails g model Site name:text region:boolean`
+  - `rails g migration CreateJoinTableStudySite study site`
 
-### Setup
-- **Option 01:** run `rails db:prepare studies=db/WWC-export-archive-2020-Apr-25-142355/Studies.csv findings=db/WWC-export-archive-2020-Apr-25-142355/Findings.csv reports=db/WWC-export-archive-2020-Apr-25-142355/InterventionReports.csv`
-  - For newer data, simply substitute the CSV filepaths: modulo any newly-adde corruptions to the data, the scrubbers/loaders should function identically.
-  - This option is _sloooooooooow_ -- like, ~8-9 minutes slow. It's doing tons of table sequential-scans, and instancing tons of ActiveRecord objects (_neither of which is necessary: but the removal of which is an optimization I haven't yet had time for._)
-- **Option 02:** run `rails db:create && psql -d wwc_api_development -f db/2020_04_25_snapshot.sql`
-  - You're stuck with the data from April 25th, 2020 (_unless you want to update and PR!_) 😸
-  - On the other hand, this method takes... ~2 seconds?
-
-### Next Steps
+## Next Steps: Server
 - For `studies` table, create Ruby script to replace states (_et al_) fields w/ many-many join table (_...eventually_)
 - Extract `outcome_domain` to separate Model (_...eventually_)
 - Add scraper script for FTS `descriptions` field on `interventions` table
@@ -68,6 +72,15 @@
   - Use `pg_search` this time; reference these posts:
     - https://pganalyze.com/blog/full-text-search-ruby-rails-postgres
     - https://thoughtbot.com/blog/optimizing-full-text-search-with-postgres-tsvector-columns-and-triggers
-- Create React SPA
-  - Build `Controller` classes only as needed
-  - No CSS framework; use FEM notes
+    - https://www.viget.com/articles/implementing-full-text-search-in-rails-with-postgres/
+
+## Next Steps: Client
+- Build `Controller` classes only as needed
+- No CSS framework: use FEM notes/O'Reilly books (can possibly reuse across apps)
+- One API, two SPA's
+  - Vue app
+    - New framework
+    - Still have component classes/lifecycle events
+  - React app
+    - Familiar framework
+    - Only use Hooks and Context API's for state-management

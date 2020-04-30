@@ -65,10 +65,11 @@
   - Create `add_sites_to_studies.rb` seed-code
   - `rails g model Site name:text region:boolean`
   - `rails g migration CreateJoinTableStudySite study site`
-- Eleventh Commit
+- Eleventh, Twelfth Commit:
   - Generate script, then run, `bundle exec ruby lib/oneoffs/bool_sets_model_generator.rb`
   - `rails db:migrate`
-  - 
+  - Create `bool_sets_transformer.rb` seed-code
+ 
 ## Next Steps: Server
 - For `studies` table, create Ruby script to replace states (_et al_) fields w/ many-many join table (_...eventually_)
 - Extract `outcome_domain` to separate Model (_...eventually_)

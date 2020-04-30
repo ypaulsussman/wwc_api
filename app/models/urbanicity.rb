@@ -1,0 +1,2 @@
+class Urbanicity < ApplicationRecord
+end

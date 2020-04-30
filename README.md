@@ -16,6 +16,8 @@
 - In `studies`: `productid` doesn't map to unique `product_name` for ID's ( 1, 11, 12, 14, 15, 18, 19, 21, 22, 23)
 - In `studies`: `study_design` undercounts `Randomized c/Controlled t/Trial` by case-sensitive split in records
 - In `intervention_reports`: `outcome_domain` is `text`, not `int`
+- All `boolean` values coded as `1.00`, save for those in the `Topic_*` subset, which are coded as `1`
+- Nit, but why is `Program_Type` capitalized, while `Class_type` and `School_type` are not?
 
 ## Progress Log (Steps to v1)
 - Initial Commit:
@@ -63,7 +65,10 @@
   - Create `add_sites_to_studies.rb` seed-code
   - `rails g model Site name:text region:boolean`
   - `rails g migration CreateJoinTableStudySite study site`
-
+- Eleventh Commit
+  - Generate script, then run, `bundle exec ruby lib/oneoffs/bool_sets_model_generator.rb`
+  - `rails db:migrate`
+  - 
 ## Next Steps: Server
 - For `studies` table, create Ruby script to replace states (_et al_) fields w/ many-many join table (_...eventually_)
 - Extract `outcome_domain` to separate Model (_...eventually_)

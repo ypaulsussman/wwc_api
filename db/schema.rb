@@ -10,10 +10,32 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_29_020102) do
+ActiveRecord::Schema.define(version: 2020_04_30_025341) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "class_types", force: :cascade do |t|
+    t.text "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "class_types_studies", id: false, force: :cascade do |t|
+    t.bigint "study_id", null: false
+    t.bigint "class_type_id", null: false
+  end
+
+  create_table "delivery_methods", force: :cascade do |t|
+    t.text "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "delivery_methods_studies", id: false, force: :cascade do |t|
+    t.bigint "study_id", null: false
+    t.bigint "delivery_method_id", null: false
+  end
 
   create_table "findings", force: :cascade do |t|
     t.bigint "intervention_id", null: false
@@ -51,6 +73,17 @@ ActiveRecord::Schema.define(version: 2020_04_29_020102) do
     t.index ["review_id"], name: "index_findings_on_review_id"
   end
 
+  create_table "grades", force: :cascade do |t|
+    t.text "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "grades_studies", id: false, force: :cascade do |t|
+    t.bigint "study_id", null: false
+    t.bigint "grade_id", null: false
+  end
+
   create_table "intervention_reports", force: :cascade do |t|
     t.integer "intervention_id"
     t.integer "protocol_id"
@@ -84,6 +117,17 @@ ActiveRecord::Schema.define(version: 2020_04_29_020102) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "program_types", force: :cascade do |t|
+    t.text "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "program_types_studies", id: false, force: :cascade do |t|
+    t.bigint "study_id", null: false
+    t.bigint "program_type_id", null: false
+  end
+
   create_table "protocols", force: :cascade do |t|
     t.text "name"
     t.float "version"
@@ -104,6 +148,17 @@ ActiveRecord::Schema.define(version: 2020_04_29_020102) do
     t.text "ineligibility_reason"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "school_types", force: :cascade do |t|
+    t.text "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "school_types_studies", id: false, force: :cascade do |t|
+    t.bigint "study_id", null: false
+    t.bigint "school_type_id", null: false
   end
 
   create_table "sites", force: :cascade do |t|
@@ -141,6 +196,28 @@ ActiveRecord::Schema.define(version: 2020_04_29_020102) do
     t.float "race_white"
     t.float "gender_female"
     t.float "gender_male"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "studies_topics", id: false, force: :cascade do |t|
+    t.bigint "study_id", null: false
+    t.bigint "topic_id", null: false
+  end
+
+  create_table "studies_urbanicities", id: false, force: :cascade do |t|
+    t.bigint "study_id", null: false
+    t.bigint "urbanicity_id", null: false
+  end
+
+  create_table "topics", force: :cascade do |t|
+    t.text "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "urbanicities", force: :cascade do |t|
+    t.text "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end

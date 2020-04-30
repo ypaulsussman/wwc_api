@@ -45,7 +45,6 @@ def @studies_data.add_boolean_sets(path_to_csv, db_name)
       populate_query += "(#{v[0]}, #{conn.escape_literal(v[1])}, NOW(), NOW() ), "
     end
     populate_query.chomp!(', ') << ';'
-    puts(populate_query)
     conn.exec(populate_query)
   end
 
@@ -65,10 +64,11 @@ def @studies_data.add_boolean_sets(path_to_csv, db_name)
 
     CSV.foreach(path_to_csv, headers: true) do |row|
       set.each do |k, v|
-        next unless row[k] == '1.00'
-
-        puts("INSERT INTO #{join_table_name}(study_id, #{prefix.downcase}_id) VALUES "\
-        "(#{conn.escape_literal(row['StudyID'])}, #{v[0]})")
+        unless k.include?('Topic')
+          next unless row[k] == '1.00'
+        else
+          next unless row[k] == '1'
+        end
 
         conn.exec("INSERT INTO #{join_table_name}(study_id, #{prefix.downcase}_id) VALUES "\
         "(#{conn.escape_literal(row['StudyID'])}, #{v[0]})")
@@ -79,7 +79,6 @@ def @studies_data.add_boolean_sets(path_to_csv, db_name)
       'WHERE ss1.ctid < ss2.ctid AND ss1.study_id = ss2.study_id '\
       "AND ss1.#{prefix.downcase}_id = ss2.#{prefix.downcase}_id"
 
-    puts(remove_dupes)
     conn.exec(remove_dupes)
   end
 end

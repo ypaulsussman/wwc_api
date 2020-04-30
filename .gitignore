@@ -20,3 +20,7 @@
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
+
+/db/studies_formatted.csv
+/db/findings_formatted.csv
+/db/reports_formatted.csv

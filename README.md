@@ -5,6 +5,7 @@
   - For newer data, simply substitute the CSV filepaths: modulo any newly-added corruptions to the data, the scrubbers/loaders should function identically.
   - This option is _sloooooooooow_ -- like, ~8-9 minutes slow. It's doing tons of table sequential-scans, and instancing tons of ActiveRecord objects (_neither of which is necessary: but the removal of which is an optimization I haven't yet had time for._)
 - **Option 02:** run `rails db:create && psql -d wwc_api_development -f db/2020_04_25_snapshot.sql`
+  - (This requires you to combine the two public Gists I've posted on GH, one for schema and one for data, into a file titled `db/2020_04_25_snapshot.sql` -- or you can use `pg_restore` with `-a`/`-s`.)
   - You're stuck with the data from April 25th, 2020 (_unless you want to update and PR!_) 😸
   - On the other hand, this method takes... ~2 seconds?
 
@@ -65,7 +66,7 @@
   - Create `add_sites_to_studies.rb` seed-code
   - `rails g model Site name:text region:boolean`
   - `rails g migration CreateJoinTableStudySite study site`
-- Eleventh, Twelfth Commit:
+- Eleventh, Twelfth, Thirteenth Commit:
   - Generate script, then run, `bundle exec ruby lib/oneoffs/bool_sets_model_generator.rb`
   - `rails db:migrate`
   - Create `bool_sets_transformer.rb` seed-code

@@ -72,14 +72,23 @@
   - Create `bool_sets_transformer.rb` seed-code
  
 ## Next Steps: Server
-- For `studies` table, create Ruby script to replace states (_et al_) fields w/ many-many join table (_...eventually_)
-- Extract `outcome_domain` to separate Model (_...eventually_)
+- Create page for more-granular `Study` search
+  - add model for matview: https://github.com/scenic-views/scenic#can-i-use-this-view-to-back-a-model
+  - does it work? try rails c
+  - follow these articles if not:
+    - https://caspg.com/blog/optimizing-full-text-search-with-postgres-materialized-view-in-rails
+    - https://pganalyze.com/blog/materialized-views-ruby-rails
+  - if so, follow this article to integrate pg_search:
+    - https://pganalyze.com/blog/full-text-search-ruby-rails-postgres
+    - you probably also want:
+      - https://github.com/Casecommons/pg_search#pg_search_scope
+      - https://thoughtbot.com/blog/optimizing-full-text-search-with-postgres-tsvector-columns-and-triggers
+    - OR: compose your own queries inside the model?
+  - follow this to create trigram table for autocomplete, afterward: 
+    - https://www.postgresql.org/docs/current/pgtrgm.html#id-1.11.7.40.8
 - Add scraper script for FTS `descriptions` field on `interventions` table
   - Use `Intervention_Page_URL`?
-  - Use `pg_search` this time; reference these posts:
-    - https://pganalyze.com/blog/full-text-search-ruby-rails-postgres
-    - https://thoughtbot.com/blog/optimizing-full-text-search-with-postgres-tsvector-columns-and-triggers
-    - https://www.viget.com/articles/implementing-full-text-search-in-rails-with-postgres/
+- Extract `outcome_domain` to separate Model (_...eventually_)
 
 ## Next Steps: Client
 - Build `Controller` classes only as needed

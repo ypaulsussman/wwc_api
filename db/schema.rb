@@ -12,7 +12,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_30_025341) do
+ActiveRecord::Schema.define(version: 2020_05_05_004012) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -205,6 +205,7 @@ ActiveRecord::Schema.define(version: 2020_04_30_025341) do
   create_table "studies_topics", id: false, force: :cascade do |t|
     t.bigint "study_id", null: false
     t.bigint "topic_id", null: false
+    t.index ["topic_id", "study_id"], name: "index_studies_topics_on_topic_id_and_study_id"
   end
 
   create_table "studies_urbanicities", id: false, force: :cascade do |t|

@@ -20,10 +20,9 @@ Bundler.require(*Rails.groups)
 module WwcApi
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
+    # Settings in config/environments/* take precedence over those specified here.
     config.load_defaults 6.0
     config.api_only = true
-
-    # Settings in config/environments/* take precedence over those specified here.
-    # Application configuration can go into .rb files in config/initializers/*
+    config.active_record.schema_format = :sql
   end
 end

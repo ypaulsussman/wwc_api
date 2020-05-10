@@ -25,7 +25,7 @@ COMMENT ON EXTENSION pg_trgm IS 'text similarity measurement and index searching
 
 SET default_tablespace = '';
 
-SET default_with_oids = false;
+SET default_table_access_method = heap;
 
 --
 -- Name: ar_internal_metadata; Type: TABLE; Schema: public; Owner: -
@@ -543,7 +543,15 @@ CREATE TABLE public.studies (
     gender_female double precision,
     gender_male double precision,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    author_fts tsvector GENERATED ALWAYS AS (to_tsvector('english'::regconfig, COALESCE(regexp_replace(citation, '\(.*'::text, ''::text, 'g'::text), ''::text))) STORED,
+    title_fts tsvector GENERATED ALWAYS AS (to_tsvector('english'::regconfig, COALESCE(regexp_replace(regexp_replace(citation, '.*\)\.\s'::text, ''::text), '\..*'::text, ''::text), ''::text))) STORED,
+    publication_fts tsvector GENERATED ALWAYS AS (to_tsvector('english'::regconfig, COALESCE(regexp_replace(publication, '[\d]+'::text, ''::text), ''::text))) STORED,
+    publication_year integer GENERATED ALWAYS AS ((
+CASE
+    WHEN (regexp_replace(publication_date, '[^\d]+'::text, ''::text, 'g'::text) <> ''::text) THEN regexp_replace(publication_date, '[^\d]+'::text, ''::text, 'g'::text)
+    ELSE NULL::text
+END)::integer) STORED
 );
 
 
@@ -1054,13 +1062,6 @@ CREATE INDEX index_sites_studies_on_study_id_and_site_id ON public.sites_studies
 
 
 --
--- Name: index_studies_topics_on_topic_id_and_study_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_studies_topics_on_topic_id_and_study_id ON public.studies_topics USING btree (topic_id, study_id);
-
-
---
 -- Name: searchable_studies_author_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1147,6 +1148,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200430025340'),
 ('20200430025341'),
 ('20200505004012'),
-('20200506014806');
+('20200506014806'),
+('20200506021708'),
+('20200507003934');
 
 

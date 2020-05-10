@@ -3,8 +3,13 @@
 class AddSearchableFieldsToStudies < ActiveRecord::Migration[6.0]
   def up
     # TODO: Why do we need to double-escape regex?
+
     # TODO: Why do citations ending in '). ' wipe their entire contents in L22
     # the (first regexp_replace), even when the 'g' flag isn't specified && there's a prior match?
+    # Update: in the interim, you _can_ match against '^.{0,120}\\)\\.\\s' instead; it'll allow
+    # ~300 'title' fields to also include author information, but reduces the number of 'title'
+    # fields that are wholly emptied by the regex from 67 to 8. Not great, but better.
+
     execute <<-SQL
       ALTER TABLE studies
       ADD

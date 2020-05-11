@@ -4,10 +4,10 @@
 - **Option 01:** run `rails db:reset studies=db/WWC-export-archive-2020-Apr-25-142355/Studies.csv findings=db/WWC-export-archive-2020-Apr-25-142355/Findings.csv reports=db/WWC-export-archive-2020-Apr-25-142355/InterventionReports.csv`
   - For newer data, simply substitute the CSV filepaths: modulo any newly-added corruptions to the data, the scrubbers/loaders should function identically.
   - This option is _sloooooooooow_ -- like, ~8-9 minutes slow. It's doing tons of table sequential-scans, and instancing tons of ActiveRecord objects (_neither of which is necessary: but the removal of which is an optimization I haven't yet had time for._)
-- **Option 02:** run `rails db:create && psql -d wwc_api_development -f db/2020_04_25_snapshot.sql`
-  - (This requires you to combine the two public Gists I've posted on GH, one for schema and one for data, into a file titled `db/2020_04_25_snapshot.sql` -- or you can use `pg_restore` with `-a`/`-s`.)
+- **Option 02:** run `rails db:create && rails db:migrate && psql -d wwc_api_development -f ../2020_04_25_data.sql`
+  - This requires you to download a public [Gist containing the data](https://gist.github.com/ypaulsussman/ad7cd34f3db8bc4fd410d9b7f6937ed2).
   - You're stuck with the data from April 25th, 2020 (_unless you want to update and PR!_) 😸
-  - On the other hand, this method takes... ~2 seconds?
+  - On the other hand, this method takes under a second.
 
 ## Initial Data Corruptions (Contact WWC Later)
 - Malformed CSV's (_see scrubbers for steps to fix_)

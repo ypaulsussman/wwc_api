@@ -1,5 +1,11 @@
 # What Works Clearinghouse API
 
+I used my [previous Rails toy app](https://github.com/ypaulsussman/opl) to get more familiar with `foreman`, `ActionMailer`, Rails 5.1+ system testing, `webpack`, hand-rolled session-based auth(z/n), and basic full-text search in PostgreSQL.
+
+I'm using this one to learn about [JWT](https://github.com/ypaulsussman/wwc_api/blob/master/app/controllers/tokens_controller.rb), and PostgreSQL's more in-depth full-text search options, before setting it up to feed JSON to (_at least one_) SPA... so I can learn exactly how much I dislike this decoupled approach to app development ^_^
+
+(_In addition, I like what WWC does quite a bit, but I find their their current browser UI opaque and unergonomic to navigate._)
+
 ## Setup
 - **Option 01:** run `rails db:reset studies=db/WWC-export-archive-2020-Apr-25-142355/Studies.csv findings=db/WWC-export-archive-2020-Apr-25-142355/Findings.csv reports=db/WWC-export-archive-2020-Apr-25-142355/InterventionReports.csv`
   - For newer data, simply substitute the CSV filepaths: modulo any newly-added corruptions to the data, the scrubbers/loaders should function identically.
@@ -9,76 +15,13 @@
   - You're stuck with the data from April 25th, 2020 (_unless you want to update and PR!_) 😸
   - On the other hand, this method takes under a second.
 
-## Initial Data Corruptions (Contact WWC Later)
-- Malformed CSV's (_see scrubbers for steps to fix_)
-- In `reviewdictionary`: `reviewid` field is missing from `studies` and `findings`
-- In `studies`: `demographics_of_study_sample_international` is `boolean`, not `percent`
-- In `studies`: `ethnicity_hispanic` and `ethnicity_not_hispanic` are `percent`, not `boolean`
-- In `studies`: `productid` doesn't map to unique `product_name` for ID's ( 1, 11, 12, 14, 15, 18, 19, 21, 22, 23)
-- In `studies`: `study_design` undercounts `Randomized c/Controlled t/Trial` by case-sensitive split in records
-- In `intervention_reports`: `outcome_domain` is `text`, not `int`
-- All `boolean` values coded as `1.00`, save for those in the `Topic_*` subset, which are coded as `1`
-- Nit, but why is `Program_Type` capitalized, while `Class_type` and `School_type` are not?
-
-## Progress Log (Steps to v1)
-- Initial Commit:
-  - `rails new wwc_api --api --skip-sprockets --skip-action-mailbox --skip-action-text --skip-sprockets --skip-system-test --skip-turbolinks --database=postgresql`
-  - Clean up `Gemfile` and `application.rb`
-  - Add `Rack::Cors` and `Rack::Attack` middlewares to `initializers/`
-- Second Commit:
-  - Pull `JsonWebToken`, `User`, `ApplicationController`, `TokensController`, and `Rails.application.routes.draw` code from initial JWT-playground repo
-  - Disable JWT-authentication, for now: assume no one cares about this repo enough to actively abuse the API, and that `Rack::Attack` will cover most passive cases
-- Third Commit: ...README Typos 😇
-- Fourth Commit:
-  - `rails g model Intervention name:text`
-  - `rails g model OutcomeMeasure name:text`
-  - `rails g model Finding intervention:references outcome_measure:references comparison:text outcome_domain:text period:text sample_description:text is_subgroup:boolean outcome_sample_size:integer outcome_measure_intervention_sample_size:float outcome_measure_comparison_sample_size:float intervention_clusters_sample_size:integer comparison_clusters_sample_size:integer intervention_mean:float comparison_mean:float intervention_standard_deviation:integer comparison_standard_deviation:integer effect_size_study:float effect_size_wwc:float improvement_index:float p_value_study:float p_value_wwc:float icc:float clusters_total:float is_statistically_significant:boolean finding_rating:text essa_rating:text l1_unit_of_analysis:text`
-  - Add most-current copy of WWC data to `db` (_the code makes this replaceable ad lib; when seeding, simply specify path to different data-dir_)
-  - Add `findings` scrubber and importer to `seeds.rb`
-- Fifth Commit: 
-  - Add `studies` scrubber and importer to `seeds.rb`
-- Sixth Commit:
-  - `rails g model Product name:text wwcid:integer`
-    - Note: you ran `rails d model` and the `rails g model` with the second field; that's why this migration follows the others
-    - No idea why you didn't create a new migration to add the `wwcid` field, once it became clear its non-uniqueness prevents its from functioning as a PK 
-  - `rails g model Protocol name:text version:float`
-  - `rails g model Review intervention_id:integer product_id:integer protocol_id:integer standards_version:text purpose_of_review:text posting_date:date study_rating:text rating_reason:text ineligibility_reason:text`
-  - Add `has_many ...` and `belongs_to ..., optional: true` to connect `Review` to other models (_it can't use_ `my_model:references` _in its generators b/c some review records lack even one of the three_)
-  - `rails g model Study review:references citation:text publication:text publication_date:text study_page_url:text study_design:text ericid:text multisite:boolean demographics_of_study_sample_international:boolean demographics_of_study_sample_english_language_learners:float demographics_of_study_sample_free_or_reduced_price_lunch:float ethnicity_hispanic:float ethnicity_not_hispanic:float race_asian:float race_black:float race_native_american:float race_other:float race_pacific_islander:float race_white:float gender_female:float gender_male:float`
-  - `rails g migration AddReviewRefToFindings review:references`
-  - `rails db:reset studies=db/WWC-export-archive-2020-Apr-25-142355/Studies.csv`
-  - `rails db:seed findings=db/WWC-export-archive-2020-Apr-25-142355/Findings.csv`
-  - Add formatted temp-file handling to `seeds.rb`/`*_scrubber.rb`
-- Seventh Commit:
-  - `rails g migration AddWwcidToInterventions wwcid:integer`
-  - `rails g migration DropReviewRefFromStudies review:references`
-  - `rails g migration AddStudyReftoReviews study:references`
-  - Invert (_that is, correct_) the `has_many`/`belongs_to` on `Study` and `Review`
-  - Add `has_many :findings, through: :reviews` to `Study`
-  - Replace the above migrations with manual updates to the prior migrations... mostly just to see if it breaks anything (_so far, so good?_)
-- Eighth Commit:
-  - Extract `studies`/`findings` seed-code into separate `*_loader.rb` files
-- Ninth Commit:
-  - `rails g migration AddWwcUrlToInterventions`
-  - `rails g model InterventionReport intervention_id:integer protocol_id:integer numstudiesmeetingstandards:integer numstudieseligible:integer sample_size_intervention:integer effectiveness_rating:text outcome_domain:text`
-  - Correct the `has_many`/`belongs_to` associations on a couple models
-- Tenth Commit:
-  - Create `add_sites_to_studies.rb` seed-code
-  - `rails g model Site name:text region:boolean`
-  - `rails g migration CreateJoinTableStudySite study site`
-- Eleventh, Twelfth, Thirteenth Commit:
-  - Generate script, then run, `bundle exec ruby lib/oneoffs/bool_sets_model_generator.rb`
-  - `rails db:migrate`
-  - Create `bool_sets_transformer.rb` seed-code
- 
-
 ## Next Steps: Server
 - Finish studies searches
   - `rails g controller StudySearches create autocomplete`
   - add method on `Study` model to combine filter params and FTS search into a db query
 - Add studies autocomplete
   - add trigrams columns, per https://www.postgresql.org/docs/12/pgtrgm.html#id-1.11.7.40.8 (use the same regexp you did to extract `author_fts`, `title_fts`, and `publication_fts`.)
-  - add method on `Study` model (_or elsewhere?_) to select most-similar words based on 
+  - add method on `Study` model (_or elsewhere?_) to select most-similar words from that column
 
 - Add scraper script for FTS `descriptions` field on `interventions` table
   - Use `Intervention_Page_URL`?
@@ -88,6 +31,11 @@
 ## Next Steps: Client
 - Build `Controller` classes only as needed
 - No CSS framework: use FEM notes/O'Reilly books (can possibly reuse across apps)
+- Ankify the following, as you reference them:
+  - https://csslayout.io/
+  - https://htmldom.dev/
+  - https://1loc.dev/
+  - https://devhints.io/es6
 - One API, two SPA's
   - Vue app
     - New framework

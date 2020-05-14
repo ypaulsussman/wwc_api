@@ -12,7 +12,7 @@ class ApplicationController < ActionController::API
   end
 
   def lander
-    render json: { 'bro': 'sup!' }
+    render json: { 'your_token': 'is rad!' }
   end
 
   private

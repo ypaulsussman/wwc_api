@@ -16,17 +16,19 @@ I'm using this one to learn about [JWT](https://github.com/ypaulsussman/wwc_api/
   - On the other hand, this method takes under a second.
 
 ## Next Steps: Server
-- Finish studies searches
-  - `rails g controller StudySearches create autocomplete`
-  - add method on `Study` model to combine filter params and FTS search into a db query
+- Finish studies-search page
+  - Add logic for `prefilter` using sidebar/`request.body`-params
 - Add studies autocomplete
-  - add trigrams columns, per https://www.postgresql.org/docs/12/pgtrgm.html#id-1.11.7.40.8 (use the same regexp you did to extract `author_fts`, `title_fts`, and `publication_fts`.)
-  - add method on `Study` model (_or elsewhere?_) to select most-similar words from that column
+  - add trigrams columns, per https://www.postgresql.org/docs/12/pgtrgm.html#id-1.11.7.40.8 
+  - possibly also reference https://dev.to/kaleman15/fuzzy-searching-with-postgresql-97o
+  - use the same regexp you did to extract `author_fts`, `title_fts`, and `publication_fts`.)
+  - add method on `Study` model (_or elsewhere?_) to select ten (20?) most-similar words from that column
 
-- Add scraper script for FTS `descriptions` field on `interventions` table
-  - Use `Intervention_Page_URL`?
-- Extract `outcome_domain` to separate Model (_...eventually_)
-
+- Begin interventions-search page
+  - Add scraper script for FTS `descriptions` field on `interventions` table
+    - Use `Intervention_Page_URL`?
+  - Extract `outcome_domain` to separate Model (_...eventually_)
+  - How does `products` relate to `interventions` in the `reviews` table?
 
 ## Next Steps: Client
 - Build `Controller` classes only as needed
@@ -43,3 +45,4 @@ I'm using this one to learn about [JWT](https://github.com/ypaulsussman/wwc_api/
   - React app
     - Familiar framework
     - Only use Hooks and Context API's for state-management
+- Consider building a third, HTML-first, version: perhaps using this [fetch() demo](https://remimercier.com/asynchronous-requests/) for faster reloads 

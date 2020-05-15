@@ -13,8 +13,9 @@ class Study < ApplicationRecord
   has_and_belongs_to_many :urbanicities
 
   class << self
-    def fts(search_kv)
-      text_search = all.left_outer_joins(:topics)
+    def fts(filter_kv, search_kv)
+      text_search = prefiltered(filter_kv).left_outer_joins(:topics)
+      search_kv ||= {}
       search_kv.each do |search_key, search_string|
         unless %w[author title publication].include?(search_key)
           break { 'hey_choose': 'a real field' }
@@ -33,9 +34,14 @@ class Study < ApplicationRecord
         .select(preposterous_select)
     end
 
-    # def prefiltered(filter_kv)
-    #   puts 'lol'
-    #   return none if result = nil
-    # end
+    private
+
+    def prefiltered(filter_kv)
+      result = "foo for now! #{filter_kv}"
+
+      return none if result.nil? # keep to protect against chaining error
+
+      all # remove after implementing filters
+    end
   end
 end

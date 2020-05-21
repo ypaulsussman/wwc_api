@@ -37,9 +37,10 @@ class Study < ApplicationRecord
     private
 
     def prefiltered(filter_kv)
-      result = "foo for now! #{filter_kv}"
+      result = filter_kv
+      puts(result)
 
-      return none if result.nil? # keep to protect against chaining error
+      return none if result.nil? # keep to protect against chaining-nil error
 
       all # remove after implementing filters
     end

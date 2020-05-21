@@ -1,0 +1,60 @@
+{
+  "Any Decade": [
+    "1910's",
+    "1920's",
+    "1930's",
+    "1940's",
+    "1950's",
+    "1960's",
+    "1970's",
+    "1980's",
+    "1990's",
+    "2000's",
+    "2010's"
+  ],
+  "All Study Topics": [
+    "Behavior",
+    "Charter Schools",
+    "ELL",
+    "Early Childhood",
+    "K to 12th Grade",
+    "Literacy",
+    "Mathematics",
+    "Path to Graduation",
+    "Postsecondary",
+    "SWD",
+    "Science",
+    "Teacher Excellence"
+  ],
+  "All Study Designs": [
+    "Randomized Controlled Trial",
+    "Quasi-Experimental Design",
+    "Pretest-posttest",
+    "Other design",
+    "Single Case Design",
+    "Meta-analysis",
+    "Regression Discontinuity Design"
+  ],
+  "All Program Types": [
+    "School level",
+    "Curriculum",
+    "Policy",
+    "Practice",
+    "Supplement",
+    "Teacher level"
+  ],
+  "All Delivery Methods": [
+    "Small Group",
+    "Individual",
+    "School",
+    "Whole Class"
+  ],
+  "All Settings": ["Rural", "Suburban", "Urban"],
+  "All School Types": ["Public", "Charter", "Private", "Parochial"],
+  "Only Multisite Studies": false,
+  "Only International Studies": false,
+  "Any % ELL's": ["0-20%", "21-40%", "41-40%", "61-40%", "81-100%"],
+  "Any % FRPL-Qualifying": ["0-20%", "21-40%", "41-40%", "61-40%", "81-100%"],
+  "Any % Hispanic": ["0-20%", "21-40%", "41-40%", "61-40%", "81-100%"],
+  "Any % Male": ["0-20%", "21-40%", "41-40%", "61-40%", "81-100%"]
+}

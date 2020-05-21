@@ -15,7 +15,7 @@ I'm using this one to learn about [JWT](https://github.com/ypaulsussman/wwc_api/
   - You're stuck with the data from April 25th, 2020 (_unless you want to update and PR!_) 😸
   - On the other hand, this method takes under a second.
 
-## Next Steps: Server
+## Next Steps: API/Server
 - Finish studies-search page
   - Add logic for `prefilter` using sidebar/`request.body`-params
 - Add studies autocomplete
@@ -24,11 +24,18 @@ I'm using this one to learn about [JWT](https://github.com/ypaulsussman/wwc_api/
   - use the same regexp you did to extract `author_fts`, `title_fts`, and `publication_fts`.)
   - add method on `Study` model (_or elsewhere?_) to select ten (20?) most-similar words from that column
 
-- Begin interventions-search page
+- Add interventions-search page
   - Add scraper script for FTS `descriptions` field on `interventions` table
     - Use `Intervention_Page_URL`?
   - Extract `outcome_domain` to separate Model (_...eventually_)
   - How does `products` relate to `interventions` in the `reviews` table?
+
+- Add [`Review`, `Finding`] search (by `Protocol` / `Protocol Version`...and  `Standards`?)
+
+- Add Histogram chart (_with selector for what to plot on x/y axes? Or static RQ's, like..._)
+  - Which topics most commonly collocate with each other?
+  - Which topics most commonly collocate across years?
+  - Which fields return the most/strongest findings?
 
 ## Next Steps: Client
 - Build `Controller` classes only as needed
@@ -45,4 +52,5 @@ I'm using this one to learn about [JWT](https://github.com/ypaulsussman/wwc_api/
   - React app
     - Familiar framework
     - Only use Hooks and Context API's for state-management
+    - For setup, reference: https://github.com/coryhouse/reactjsconsulting/blob/master/dev-environment/.vscode/extensions.json
 - Consider building a third, HTML-first, version: perhaps using this [fetch() demo](https://remimercier.com/asynchronous-requests/) for faster reloads 

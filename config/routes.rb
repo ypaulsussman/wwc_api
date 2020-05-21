@@ -5,6 +5,7 @@ Rails.application.routes.draw do
     root to: 'application#lander'
     post 'login', to: 'tokens#create'
 
+    resources :studies, only: [:index, :show]
     resources :study_searches, only: [:create] do
       post 'autocomplete', on: :collection
     end

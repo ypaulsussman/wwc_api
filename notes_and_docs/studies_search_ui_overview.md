@@ -1,0 +1,101 @@
+## Studies FTS Page
+
+### FTS Searchbar
+- Author
+- Title
+- Publication
+- Use `ts_rank` (`ts_rank_cd`?) for relevance-matching
+
+### FTS Filter
+
+- Any Decade [ x ]
+  - 1910's [ ]
+  - 1920's [ ]
+  - 1930's [ ]
+  - 1940's [ ]
+  - 1950's [ ]
+  - 1960's [ ]
+  - 1970's [ ]
+  - 1980's [ ]
+  - 1990's [ ]
+  - 2000's [ ]
+  - 2010's [ ]
+- All Study Topics [ x ]
+  - Behavior [ ]
+  - Charter Schools [ ]
+  - ELL [ ]
+  - Early Childhood [ ]
+  - K to 12th Grade [ ]
+  - Literacy [ ]
+  - Mathematics [ ]
+  - Path to Graduation [ ]
+  - Postsecondary [ ]
+  - SWD [ ]
+  - Science [ ]
+  - Teacher Excellence [ ]
+
+- All Study Designs [ x ]
+  - Randomized Controlled Trial      [ ]
+  - Quasi-Experimental Design        [ ]
+  - Pretest-posttest                 [ ]
+  - Other design                     [ ]
+  - Single Case Design               [ ]
+  - Meta-analysis                    [ ]
+  - Regression Discontinuity Design  [ ]
+- All Program Types [ x ]
+  - School level
+  - Curriculum
+  - Policy
+  - Practice
+  - Supplement
+  - Teacher level
+- All Delivery Methods [ x ]
+  - Small Group
+  - Individual
+  - School
+  - Whole Class
+
+- All Settings [ x ]
+  - Rural
+  - Suburban
+  - Urban
+- All School Types [ x ]
+  - Public
+  - Charter
+  - Private
+  - Parochial
+
+- Only Multisite Studies [ ]
+- Only International Studies [ ]
+
+- Any % ELL's [ x ]
+  - 0% [ ]
+  - 1-20% [ ]
+  - 21-40% [ ]
+  - 41-40% [ ]
+  - 61-40% [ ]
+  - 81-100% [ ]
+- Any % FRPL-Qualifying [ x ]
+  - 0% [ ]
+  - 1-20% [ ]
+  - 21-40% [ ]
+  - 41-40% [ ]
+  - 61-40% [ ]
+  - 81-100% [ ]
+- Any % Hispanic [ x ]
+  - 0% [ ]
+  - 1-20% [ ]
+  - 21-40% [ ]
+  - 41-40% [ ]
+  - 61-40% [ ]
+  - 81-100% [ ]
+- Any % Male [ x ]
+  - 0% [ ]
+  - 1-20% [ ]
+  - 21-40% [ ]
+  - 41-40% [ ]
+  - 61-40% [ ]
+  - 81-100% [ ]
+- `Note w/ tooltip about, like with % Non-Hispanic, data in complementary field frequently missing or adds up significantly less than 100%; rather than attempting to clean data from place of ignorance, working with what I have. Could - and, if requested, happy to - add filters for % Female and % Non-Hispanic: but at this stage worried already about analysis paralysis, selection overload; as such, elided them.`
+- `Note w/ tooltip about why sorting by race isn't provided: data is messy, opaquely incomplete, and possibly misleading`
+- `Note w/ tooltip about why Sites aren't present -- way too many` --also, title these 'placeholders'; make their font slightly different, and perhaps have the background explanation be a tooltip?

@@ -1,5 +1,13 @@
 # What Works Clearinghouse API
 
+**Update 05/22/20:** I wouldn't say I'm _abandoning_ this project, but I am discontinuing work on it for the foreseeable future. I touch on the reasons for doing so - as well as what I learned from getting this far! - at [a post here.](https://www.suss.world/posts/wwc-data-api-notes/)
+
+If you're looking for code to extract and apply to your own exploration of the WWC data, honestly most of the interesting stuff is in the `db/*` dir: especially the three sets of `wwc_*` ETL scripts and the (_pretty gnarly, if I say so myself!_) PostgreSQL of the `20200507003934_add_searchable_fields_to_studies.rb` migration. 
+
+Between the two of them, they should get you pretty close to having a normalized, SQL-friendly version of the WWC dataset. NB that there are several extant discrepancies in the original schema; I've yet to submit them to WWC for correction, but they can be located at `notes_and_docs/initial_data_problems.md` if you'd like to do so!
+
+## Repo Purpose
+
 I used my [previous Rails toy app](https://github.com/ypaulsussman/opl) to get more familiar with `foreman`, `ActionMailer`, Rails 5.1+ system testing, `webpack`, hand-rolled session-based auth(z/n), and basic full-text search in PostgreSQL.
 
 I'm using this one to learn about [JWT](https://github.com/ypaulsussman/wwc_api/blob/master/app/controllers/tokens_controller.rb), and PostgreSQL's more in-depth full-text search options, before setting it up to feed JSON to (_at least one_) SPA... so I can learn exactly how much I dislike this decoupled approach to app development ^_^
@@ -52,5 +60,4 @@ I'm using this one to learn about [JWT](https://github.com/ypaulsussman/wwc_api/
   - React app
     - Familiar framework
     - Only use Hooks and Context API's for state-management
-    - For setup, reference: https://github.com/coryhouse/reactjsconsulting/blob/master/dev-environment/.vscode/extensions.json
 - Consider building a third, HTML-first, version: perhaps using this [fetch() demo](https://remimercier.com/asynchronous-requests/) for faster reloads 

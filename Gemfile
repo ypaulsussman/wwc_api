@@ -14,7 +14,7 @@ gem 'bcrypt', '~> 3.1.7'
 gem 'jwt', '~> 2.2.1'
 
 # Use Puma as the app server
-gem 'puma', '~> 4.3.3'
+gem 'puma', '~> 4.3.5'
 
 # Reduce boot times through caching
 gem 'bootsnap', '>= 1.4.2', require: false

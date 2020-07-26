@@ -2,7 +2,7 @@
 
 **Update 05/22/20:** I wouldn't say I'm _abandoning_ this project, but I am discontinuing work on it for the foreseeable future. I touch on the reasons for doing so - as well as what I learned from getting this far! - at [a post here.](https://www.suss.world/posts/wwc-data-api-notes/)
 
-If you're looking for code to extract and apply to your own exploration of the WWC data, honestly most of the interesting stuff is in the `db/*` dir: especially the three sets of `wwc_*` ETL scripts and the (_pretty gnarly, if I say so myself!_) PostgreSQL of the `20200507003934_add_searchable_fields_to_studies.rb` migration. 
+If you're looking for code to extract and apply to your own exploration of the WWC data, honestly most of the interesting stuff is in the `db/*` dir: especially the three sets of `wwc_*` ETL scripts and the (_pretty gnarly, if I say so myself!_) PostgreSQL of the `20200507003934_add_searchable_fields_to_studies.rb` migration.
 
 Between the two of them, they should get you pretty close to having a normalized, SQL-friendly version of the WWC dataset. NB that there are several extant discrepancies in the original schema; I've yet to submit them to WWC for correction, but they can be located at `notes_and_docs/initial_data_problems.md` if you'd like to do so!
 
@@ -15,20 +15,32 @@ I'm using this one to learn about [JWT](https://github.com/ypaulsussman/wwc_api/
 (_In addition, I like what WWC does quite a bit, but I find their their current browser UI opaque and unergonomic to navigate._)
 
 ## Setup
-- **Option 01:** run `rails db:reset studies=db/WWC-export-archive-2020-Apr-25-142355/Studies.csv findings=db/WWC-export-archive-2020-Apr-25-142355/Findings.csv reports=db/WWC-export-archive-2020-Apr-25-142355/InterventionReports.csv`
-  - For newer data, simply substitute the CSV filepaths: modulo any newly-added corruptions to the data, the scrubbers/loaders should function identically.
-  - This option is _sloooooooooow_ -- like, ~8-9 minutes slow. It's doing tons of table sequential-scans, and instancing tons of ActiveRecord objects (_neither of which is necessary: but the removal of which is an optimization I haven't yet had time for._)
-- **Option 02:** run `rails db:create && rails db:migrate && psql -d wwc_api_development -f ../2020_04_25_data.sql`
-  - This requires you to download a public [Gist containing the data](https://gist.github.com/ypaulsussman/ad7cd34f3db8bc4fd410d9b7f6937ed2).
-  - You're stuck with the data from April 25th, 2020 (_unless you want to update and PR!_) 😸
-  - On the other hand, this method takes under a second.
+
+- DB Creation
+  - **Option 01:** run `rails db:reset studies=db/WWC-export-archive-2020-Apr-25-142355/Studies.csv findings=db/WWC-export-archive-2020-Apr-25-142355/Findings.csv reports=db/WWC-export-archive-2020-Apr-25-142355/InterventionReports.csv`
+    - For newer data, simply substitute the CSV filepaths: modulo any newly-added corruptions to the data, the scrubbers/loaders should function identically.
+    - This option is _sloooooooooow_ -- like, ~8-9 minutes slow. It's doing tons of table sequential-scans, and instancing tons of ActiveRecord objects (_neither of which is necessary: but the removal of which is an optimization I haven't yet had time for._)
+  - **Option 02:** run `rails db:create && rails db:migrate && psql -d wwc_api_development -f ../2020_04_25_data.sql`
+    - This requires you to download a public [Gist containing the data](https://gist.github.com/ypaulsussman/ad7cd34f3db8bc4fd410d9b7f6937ed2).
+    - You're stuck with the data from April 25th, 2020 (_unless you want to update and PR!_) 😸
+    - On the other hand, this method takes under a second.
+
+- JWT Testing
+  - The only requirement to make use of the scripts in `notes_and_docs/wwc_api.postman_collection.json` is to first create an email:password record in the `users` table
+  - The simplest way (_i.e. no changes needed to those Postman queries_) is to `rails c` in, then `User.create!(email: 'foobar@example.com', password: 'password')`
+
+- Querying
+  - There are currently two search endpoints:
+    - `StudySearchesController#autocomplete`, uh, serializes and returns your query params. (_As close to a noop placeholder as I could get!_)
+    - `StudySearchesController#create` performs a full-text search against any of the three tokenized `author`, `title`, and `publication` fields.
+  - The eventual (_and, see above, currently indefinitely-paused_) goal is to debounce-hit `autocomplete` to gather a list of viable query-terms as the user types their entry.
 
 ## Next Steps: API/Server
+
 - Finish studies-search page
   - Add logic for `prefilter` using sidebar/`request.body`-params
 - Add studies autocomplete
-  - add trigrams columns, per https://www.postgresql.org/docs/12/pgtrgm.html#id-1.11.7.40.8 
-  - possibly also reference https://dev.to/kaleman15/fuzzy-searching-with-postgresql-97o
+  - add trigrams columns, per [docs](https://www.postgresql.org/docs/12/pgtrgm.html#id-1.11.7.40.8)
   - use the same regexp you did to extract `author_fts`, `title_fts`, and `publication_fts`.)
   - add method on `Study` model (_or elsewhere?_) to select ten (20?) most-similar words from that column
 
@@ -46,13 +58,9 @@ I'm using this one to learn about [JWT](https://github.com/ypaulsussman/wwc_api/
   - Which fields return the most/strongest findings?
 
 ## Next Steps: Client
+
 - Build `Controller` classes only as needed
 - No CSS framework: use FEM notes/O'Reilly books (can possibly reuse across apps)
-- Ankify the following, as you reference them:
-  - https://csslayout.io/
-  - https://htmldom.dev/
-  - https://1loc.dev/
-  - https://devhints.io/es6
 - One API, two SPA's
   - Vue app
     - New framework
@@ -60,4 +68,4 @@ I'm using this one to learn about [JWT](https://github.com/ypaulsussman/wwc_api/
   - React app
     - Familiar framework
     - Only use Hooks and Context API's for state-management
-- Consider building a third, HTML-first, version: perhaps using this [fetch() demo](https://remimercier.com/asynchronous-requests/) for faster reloads 
+- Consider building a third, HTML-first, version: perhaps using this [fetch() demo](https://remimercier.com/asynchronous-requests/) for faster reloads
